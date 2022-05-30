@@ -1,0 +1,102 @@
+---
+title: "AuSSA 1979"
+author: "Samantha Richins"
+date: "May 29, 2022"
+output: 
+  html_document:
+    keep_rmd: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+
+
+## Research Question
+
+Is there a correlation between political party preference and acquired institutional education?
+
+
+## Data
+
+The Australian Survey of Social Attitudes (AUSSA 1979) 
+
+[Data Link](https://dataverse.ada.edu.au/dataset.xhtml?persistentId=doi:10.26193/AIOCOR)
+
+
+## Variables 
+
+### Independent
+
+Institutional Educational Attainment 
+
+ - Has bachelors degree
+ 
+ - Does not have bachelors degree
+
+
+### Dependent
+
+Political Party Affiliation
+
+ - Labor Party (LAP)
+ 
+ - Liberal Party
+ 
+ - National (Country) Party
+ 
+ - Australian Democrat
+ 
+ - No Party Affiliation
+ 
+ - Other Party (Not Listed)
+
+---
+
+## Graph
+
+
+```{r include=FALSE}
+AUpas_1979 <- read.csv("AUpolitical_attitudes_survey_1979.csv") %>% 
+  select(c(PYAFFL79, EDUCAT79))
+
+AUpas_79 <- AUpas_1979 %>% 
+  mutate(education = case_when(
+      EDUCAT79 <= 7 ~ "No BA",
+      EDUCAT79 == 8 ~ "Has BA"),
+    political_affiliation = case_when(
+      PYAFFL79 == 0 ~ "NA",
+      PYAFFL79 == 1 ~ "Liberal Party",
+      PYAFFL79 == 2 ~ "Labor Party (LAP)",
+      PYAFFL79 == 3 ~ "National (Country) Party",
+      PYAFFL79 == 4 ~ "Australian Democrat",
+      PYAFFL79 == 5 ~ "Other",
+      PYAFFL79 == 6 ~ "No Affiliation",
+      PYAFFL79 == 7 ~ "NA",
+      PYAFFL79 == 8 ~ "NA"
+    ))
+
+```
+
+
+```{r echo=FALSE}
+ggplot(AUpas_79) +
+  geom_bar(aes(y = political_affiliation, color = education))
+```
+
+---
+
+## Table
+
+```{r echo=FALSE}
+table(AUpas_79$political_affiliation, AUpas_79$education) %>% 
+  pander::pander()
+```
+
